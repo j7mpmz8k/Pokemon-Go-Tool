@@ -18,26 +18,21 @@ type Response struct {
 }
 
 func makeResponse() Response {
-	res := Response{
+	return Response{
 		version: "HTTP/1.1",
-		code: 200,
-		reason: "OK",
-		Headers: make(map[string]any),
-		body: "",
+		code:    200,
+		reason:  "OK",
+		body:    "",
+		Headers: map[string]any{
+			"Server":                 "PoGo Server",
+			"Date":                   time.Now().UTC().Format("Mon, 02 Jan 2006 15:04:05 GMT"),
+			"Connection":             "close",
+			"Cache-Control":          "max-age=5",
+			"X-Content-Type-Options": "nosniff",                         // Prevents browser MIME-sniffing
+			"X-Frame-Options":        "DENY",                            // Clickjacking protection
+			"Referrer-Policy":        "strict-origin-when-cross-origin", // Limits URL leakage
+		},
 	}
-
-	// Set default headers
-	res.Headers["Server"] = "PoGo Server"
-	res.Headers["Date"] = time.Now().UTC().Format("Mon, 02 Jan 2006 15:04:05 GMT")
-	res.Headers["Connection"] = "close"
-	res.Headers["Cache-Control"] = "max-age=5"
-
-	// Security headers
-	res.Headers["X-Content-Type-Options"] = "nosniff"                  // Prevents browser from guessing MIME types (MIME-sniffing)
-	res.Headers["X-Frame-Options"] = "DENY"                           // Prevents site from being embedded in iframes (clickjacking protection)
-	res.Headers["Referrer-Policy"] = "strict-origin-when-cross-origin" // Limits sensitive URL path data sent in Referer header
-
-	return res
 }
 
 func (res Response) stringify() string {
@@ -76,7 +71,7 @@ func (res *Response) SetBody(body string) {
 
 func (res *Response) loadTemplate(uri string) error{
 	// Read file from disk
-	template, err := os.ReadFile(uri)
+	template, err := os.ReadFile("templates/" + uri)
 	if err != nil {
 		return err
 	} else {

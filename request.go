@@ -14,7 +14,7 @@ type Request struct {
 	body string
 }
 
-func makeRequest(bytes string) {
+func makeRequest(bytes string) *Request {
 	req := Request{
 		headers: make(map[string]string),
 	}
@@ -22,20 +22,20 @@ func makeRequest(bytes string) {
 	// Get request line
 	requestLine, rest, found := strings.Cut(bytes, "\r\n")
 	if !found {
-		return
+		return nil
 	}
 
 	// Parse method
 	method, restOfRequestLine, found := strings.Cut(requestLine, " ")
 	if !found {
-		return
+		return nil
 	}
 	req.method = strings.TrimSpace(method)
 
 	// Parse URI and HTTP version
 	uri, version, found := strings.Cut(restOfRequestLine, " ")
 	if !found {
-		return
+		return nil
 	}
 	req.uri = strings.TrimSpace(uri)
 
@@ -47,7 +47,7 @@ func makeRequest(bytes string) {
 	// Separate headers and body
 	headerString, body, found := strings.Cut(rest, "\r\n\r\n")
 	if !found {
-		return
+		return nil
 	}
 
 	// Parse headers
@@ -62,5 +62,5 @@ func makeRequest(bytes string) {
 		req.headers[strings.TrimSpace(key)] = strings.TrimSpace(value)
 	}
 	req.body = body
-	
+	return &req
 }

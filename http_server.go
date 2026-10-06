@@ -11,6 +11,8 @@ const (
 	PORT = "8080"
 )
 
+var endpoint = loggingMiddlware(staticMiddleware(router)) 
+
 func main() {
 	address := net.JoinHostPort(HOST, PORT)
 	listener, err := net.Listen("tcp", address)
@@ -34,5 +36,14 @@ func main() {
 
 func handleConnection(conn net.Conn) {
 	defer conn.Close()
-	conn.Write([]byte("Hello from server!\n"))
+
+	buffer := make([]byte, 2048)
+	n, err := conn.Read(buffer)
+	if err != nil {
+		return
+	}
+
+	req := makeRequest(string(buffer[:n]))
+	res := endpoint(req)
+	conn.Write([]byte(res.stringify()))
 }
