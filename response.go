@@ -3,28 +3,34 @@ package main
 import (
 	"fmt"
 	"os"
+	"path"
 	"strings"
 	"time"
 )
 
 type Response struct {
 	version string
-	headers map[string]any
+	Headers map[string]any
 	code int
 	reason string
 	body string
+	ext string
 }
 
-func makeResponse() Response { //I'm responsible for code, header, body
+func makeResponse() Response {
 	res := Response{
 		version: "HTTP/1.1",
-		headers: make(map[string]any),
+		code: 200,
+		reason: "OK",
+		Headers: make(map[string]any),
+		body: "",
 	}
 
-	res.headers["Server"] = "PoGo Server"
-	res.headers["Date"] = time.Now().UTC().Format("Mon, 02 Jan 2006 15:04:05 GMT")
-	res.headers["Connection"] = "close"
-	res.headers["Cache-Control"] = "max-age=5"
+	// Set default headers
+	res.Headers["Server"] = "PoGo Server"
+	res.Headers["Date"] = time.Now().UTC().Format("Mon, 02 Jan 2006 15:04:05 GMT")
+	res.Headers["Connection"] = "close"
+	res.Headers["Cache-Control"] = "max-age=5"
 
 	return res
 }
@@ -32,35 +38,47 @@ func makeResponse() Response { //I'm responsible for code, header, body
 func (res Response) stringify() string {
 	var rawResponse strings.Builder
 
+	// Format status line
 	fmt.Fprintf(&rawResponse, "%s %d %s\r\n", res.version, res.code, res.reason)
-	for key, value := range res.headers {
+
+	// Format headers
+	for key, value := range res.Headers {
 		fmt.Fprintf(&rawResponse, "%s: %v\r\n", key, value)
 	}
+
+	// Append blank line and body
 	rawResponse.WriteString("\r\n")
 	rawResponse.WriteString(res.body)
 
 	return rawResponse.String()
 }
 
-func (res *Response) setCode(code int) {
+func (res *Response) SetCode(code int) {
 	res.code = code
+	// Look up status text (e.g. 200 -> "OK")
 	res.reason = StatusCodes[code]
+	// Default body for errors
 	if code >= 400 {
 		res.body = fmt.Sprintf("%d %s", res.code, res.reason)
 	}
 }
 
-func (res *Response) setBody(body string) {
+func (res *Response) SetBody(body string) {
 	res.body = body
-	res.headers["Content-Length"] = len(body)
+	// Auto-set Content-Length based on body byte size
+	res.Headers["Content-Length"] = len(body)
 }
 
 func (res *Response) loadTemplate(uri string) error{
+	// Read file from disk
 	template, err := os.ReadFile(uri)
 	if err != nil {
 		return err
 	} else {
-		res.setBody(string(template))
+		// Set body and Content-Type from file extension
+		res.SetBody(string(template))
+		ext := strings.TrimPrefix(path.Ext(uri), ".")
+		res.Headers["Content-Type"] = ContentTypes[ext]
 		return nil
 	}
 }
