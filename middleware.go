@@ -21,7 +21,7 @@ func staticMiddleware(next Handler) Handler {
 		if req.ext != "" {
 			res := makeResponse()
 			filepath := fmt.Sprintf("static%s", req.uri)
-			err := res.loadTemplate(filepath)
+			err := res.loadFile(filepath)
 			if err != nil {
 				if os.IsNotExist(err) {
 					res.SetCode(404)

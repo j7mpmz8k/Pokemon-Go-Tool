@@ -69,15 +69,15 @@ func (res *Response) SetBody(body string) {
 	res.Headers["Content-Length"] = len(body)
 }
 
-func (res *Response) loadTemplate(uri string) error{
+func (res *Response) loadFile(filepath string) error {
 	// Read file from disk
-	template, err := os.ReadFile("templates/" + uri)
+	template, err := os.ReadFile(filepath)
 	if err != nil {
 		return err
 	} else {
 		// Set body and Content-Type from file extension
 		res.SetBody(string(template))
-		ext := strings.TrimPrefix(path.Ext(uri), ".")
+		ext := strings.TrimPrefix(path.Ext(filepath), ".")
 		res.Headers["Content-Type"] = ContentTypes[ext]
 		return nil
 	}

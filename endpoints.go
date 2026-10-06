@@ -2,6 +2,6 @@ package main
 
 func index(req *Request) Response {
 	res := makeResponse()
-	res.loadTemplate("pogo.html")
+	res.loadFile("templates/pogo.html")
 	return res
 }
