@@ -19,6 +19,8 @@ var StatusCodes = map[int]string{
 	405: "Method Not Allowed",   // The HTTP method used is not allowed for this resource.
 	409: "Conflict",             // The request conflicts with the current state of the server (e.g., trying to create a resource that already exists).
 	422: "Unprocessable Entity", // The request is well-formed but contains semantic errors (often used for validation errors).
+	429: "Too Many Requests",     // The user has sent too many requests in a given amount of time ("rate limiting").
+
 
 	// 5xx - Server Error: The server failed to fulfill a valid request.
 	500: "Internal Server Error", // A generic server error occurred. Something went wrong on the server side.

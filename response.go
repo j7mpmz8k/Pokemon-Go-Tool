@@ -32,6 +32,11 @@ func makeResponse() Response {
 	res.Headers["Connection"] = "close"
 	res.Headers["Cache-Control"] = "max-age=5"
 
+	// Security headers
+	res.Headers["X-Content-Type-Options"] = "nosniff"                  // Prevents browser from guessing MIME types (MIME-sniffing)
+	res.Headers["X-Frame-Options"] = "DENY"                           // Prevents site from being embedded in iframes (clickjacking protection)
+	res.Headers["Referrer-Policy"] = "strict-origin-when-cross-origin" // Limits sensitive URL path data sent in Referer header
+
 	return res
 }
 
