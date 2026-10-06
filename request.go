@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-type request struct {
+type Request struct {
 	method string
 	uri string
 	ext string
@@ -15,7 +15,7 @@ type request struct {
 }
 
 func makeRequest(bytes string) {
-	req := request{
+	req := Request{
 		headers: make(map[string]string),
 	}
 	requestLine, rest, found := strings.Cut(bytes, "\r\n")
