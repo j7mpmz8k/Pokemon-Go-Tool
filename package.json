@@ -1,0 +1,29 @@
+{
+  "name": "pokemon-go-tool",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "watch": "vite build --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/j7mpmz8k/Pokemon-Go-Tool.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/j7mpmz8k/Pokemon-Go-Tool/issues"
+  },
+  "homepage": "https://github.com/j7mpmz8k/Pokemon-Go-Tool#readme",
+  "dependencies": {
+    "lit": "^3.3.3"
+  },
+  "devDependencies": {
+    "typescript": "^7.0.2",
+    "vite": "^8.3.8"
+  }
+}

@@ -1,104 +1,69 @@
-class Pokemon {
-    constructor(name, types = [], er, dps) {
-        this.name = name;
-        this.er = er;
-        this.dps = dps;
-        this.types = types;
-        this.hidden = false;
-        this.html = elementFromHTML(`
+// src/pogo.ts
+var e = class {
+	constructor(e, t = [], n, r) {
+		this._getTypesHtmlString = () => this.types.map((e) => `<div class="type ${e}">${e}</div>`).join(""), this.name = e, this.er = n, this.dps = r, this.types = t, this.hidden = !1, this.html = d(`
             <div class="pokemon-card">
                 <div class=type-wrapper>
                     ${this._getTypesHtmlString()}
                 </div>
                 <div class="name">
-                    ${name}
+                    ${e}
                 </div>
                 <div class="stat-wrapper">
-                    <span class="stat-card">er: <span class="stat">${er}</span></span>
-                    <span class="stat-card">dps: <span class="stat">${dps}</span></span>
+                    <span class="stat-card">er: <span class="stat">${n}</span></span>
+                    <span class="stat-card">dps: <span class="stat">${r}</span></span>
                 </div>
             </div>
         `);
-    }
-    
-    _getTypesHtmlString = () => {
-        return this.types.map(type => `<div class="type ${type}">${type}</div>`).join('');
-    }
+	}
+}, t = document.getElementById("pokemon"), n = document.getElementById("er-button"), r = document.getElementById("dps-button"), i = document.getElementById("types-button"), a = document.getElementById("types-dropdown-form"), o = [
+	"normal",
+	"fire",
+	"water",
+	"grass",
+	"electric",
+	"ice",
+	"fighting",
+	"poison",
+	"ground",
+	"flying",
+	"psychic",
+	"bug",
+	"rock",
+	"ghost",
+	"dragon",
+	"steel",
+	"dark",
+	"fairy"
+], s = !0, c = !0, l = [
+	new e("Pikachu", ["electric"], 34, 68),
+	new e("Charizard", ["fire", "flying"], 22, 999),
+	new e("Mew", ["psychic"], 22, 1111),
+	new e("Blastoise", ["water"], 55, 99)
+];
+function u() {
+	f(), a && (a.innerHTML = o.map((e) => `<label><input type="checkbox" value="${e}" />${e}</label>`).join(""), a.addEventListener("change", (e) => {
+		let t = e.target?.form, n = [];
+		if (t) for (let e of Array.from(t.elements)) {
+			let t = e;
+			t.checked && t.value && n.push(t.value);
+		}
+		n.length === 0 ? l.forEach((e) => e.hidden = !1) : l.forEach((e) => {
+			e.hidden = !e.types.some((e) => n.includes(e));
+		}), f();
+	})), i?.addEventListener("click", () => {
+		a?.classList.toggle("open");
+	}), n?.addEventListener("click", () => {
+		c ? l.sort((e, t) => t.er - e.er) : l.sort((e, t) => e.er - t.er), c = !c, f();
+	}), r?.addEventListener("click", () => {
+		s ? l.sort((e, t) => t.dps - e.dps) : l.sort((e, t) => e.dps - t.dps), s = !s, f();
+	});
 }
-
-const pokemonAll = document.getElementById("pokemon");
-const erButton = document.getElementById("er-button");
-const dpsButton = document.getElementById("dps-button"); 
-const typesButton = document.getElementById("types-button");
-const typesDropdownForm = document.getElementById("types-dropdown-form");
-
-const pokemonTypes = [
-    "normal", "fire", "water", "grass", "electric", "ice",
-    "fighting", "poison", "ground", "flying", "psychic", "bug",
-    "rock", "ghost", "dragon", "steel", "dark", "fairy"
-]
-
-let dpsDesc = true;
-let erDesc = true;
-
-let pokemonList = [
-    new Pokemon("Pikachu", ["electric"], 34, 68),
-    new Pokemon("Charizard", ["fire", "flying"], 22, 999),
-    new Pokemon("Mew", ["psychic"], 22, 1111),
-    new Pokemon("Blastoise", ["water"], 55, 99)
-]
-
-function main() {
-    renderPokemon();
-    typesDropdownForm.innerHTML = pokemonTypes.map(type => `<label><input type="checkbox" value="${type}" />${type}</label>`).join("");
-    typesButton.addEventListener("click", () => typesDropdownForm.classList.toggle("open"));
-    typesDropdownForm.addEventListener("change", (e) => {
-        let checkedTypes = [];
-        for (i of e.target.form) {
-            if (i.checked) {
-                checkedTypes.push(i.value);
-            }
-        }
-        if (checkedTypes.length == 0) {
-            pokemonList.forEach(pokemon => pokemon.hidden = false);
-        } else {
-            pokemonList.forEach(pokemon => {pokemon.hidden = !pokemon.types.some(type => checkedTypes.includes(type))});
-        }
-
-        renderPokemon();
-    });
-
-    erButton.addEventListener("click", () => {
-        if (erDesc) {
-            pokemonList.sort((a, b) => b.er - a.er);
-        } else {
-            pokemonList.sort((a, b) => a.er - b.er);
-        }
-        erDesc = !erDesc;
-        renderPokemon();
-    });
-
-    dpsButton.addEventListener("click", () => {
-        if (dpsDesc) {
-            pokemonList.sort((a, b) => b.dps - a.dps);
-        } else {
-            pokemonList.sort((a, b) => a.dps - b.dps);
-        }
-        dpsDesc = !dpsDesc;
-        renderPokemon();
-    });
+function d(e) {
+	let t = document.createElement("div");
+	return t.innerHTML = e.trim(), t.firstElementChild || document.createElement("div");
 }
-
-function elementFromHTML(htmlString) {
-    const tempWrapper = document.createElement("div");
-    tempWrapper.innerHTML = htmlString;
-    return tempWrapper.firstElementChild;
+function f() {
+	document.querySelectorAll(".pokemon-card").forEach((e) => e.remove()), l.filter((e) => !e.hidden).forEach((e) => t?.appendChild(e.html));
 }
-
-function renderPokemon() {
-    document.querySelectorAll(".pokemon-card").forEach(card => card.remove());
-    pokemonList.filter(pokemon => !pokemon.hidden)
-        .forEach(pokemon => pokemonAll.appendChild(pokemon.html));
-}
-
-main();
+u();
